@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Kelulusan SD</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h2 { color: #2c3e50; margin-bottom: 5px; }
+        h3 { color: #7f8c8d; margin-top: 0; font-weight: 400; margin-bottom: 25px; }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #2980b9; }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 6px;
+            display: none;
+            text-align: left;
+        }
+        .lulus { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .tidak-lulus { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .error { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; text-align: center; }
+        .btn-print {
+            background-color: #2ecc71;
+            margin-top: 15px;
+        }
+        .btn-print:hover { background-color: #27ae60; }
+        
+        /* Style untuk Cetak */
+        @media print {
+            body * { visibility: hidden; }
+            .result, .result * { visibility: visible; }
+            .result { position: absolute; left: 0; top: 0; width: 100%; border: none; background: none; }
+            .btn-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>PENGUMUMAN KELULUSAN</h2>
+    <h3>SD NEGERI HARAPAN BANGSA</h3>
+    
+    <p>Masukkan NISN Siswa untuk mengecek status kelulusan:</p>
+    <input type="text" id="nisnInput" placeholder="Contoh: 1234567890" autocomplete="off">
+    <button onclick="cekKelulusan()">Cek Status</button>
+
+    <div id="resultBox" class="result"></div>
+</div>
+
+<script>
+    // DATA SISWA (Bisa disesuaikan atau ditambah)
+    const dataSiswa = [
+        { nisn: "1234567890", nama: "Budi Santoso", status: "LULUS", nilai: "85.5" },
+        { nisn: "0987654321", nama: "Siti Aminah", status: "LULUS", nilai: "90.2" },
+        { nisn: "1122334455", nama: "Andi Wijaya", status: "TERTUNDA", nilai: "-" }
+    ];
+
+    function cekKelulusan() {
+        const input = document.getElementById('nisnInput').value.trim();
+        const resultBox = document.getElementById('resultBox');
+        
+        if (input === "") {
+            alert("Silakan masukkan NISN terlebih dahulu!");
+            return;
+        }
+
+        // Cari data siswa berdasarkan NISN
+        const siswa = dataSiswa.find(s => s.nisn === input);
+
+        resultBox.style.display = "block";
+        resultBox.className = "result"; // reset class
+
+        if (siswa) {
+            if (siswa.status === "LULUS") {
+                resultBox.classList.add("lulus");
+                resultBox.innerHTML = `
+                    <h4 style="margin-top:0; text-align:center;">🎉 SELAMAT! 🎉</h4>
+                    <hr>
+                    <p><strong>Nama :</strong> ${siswa.nama}</p>
+                    <p><strong>NISN :</strong> ${siswa.nisn}</p>
+                    <p><strong>Rata-Rata Nilai :</strong> ${siswa.nilai}</p>
+                    <p><strong>Status :</strong> <span style="font-weight:bold; color:#155724;">LULUS</span></p>
+                    <hr>
+                    <p style="font-size: 12px; font-style: italic;">Silakan cetak halaman ini sebagai Bukti Kelulusan Sementara.</p>
+                    <button class="btn-print" onclick="window.print()">Cetak Bukti</button>
+                `;
+            } else {
+                resultBox.classList.add("tidak-lulus");
+                resultBox.innerHTML = `
+                    <h4 style="margin-top:0; text-align:center;">PEMBERITAHUAN</h4>
+                    <hr>
+                    <p><strong>Nama :</strong> ${siswa.nama}</p>
+                    <p><strong>NISN :</strong> ${siswa.nisn}</p>
+                    <p><strong>Status :</strong> Ditunda / Belum Lulus</p>
+                    <hr>
+                    <p style="font-size: 12px;">Silakan hubungi pihak sekolah atau wali kelas untuk informasi lebih lanjut.</p>
+                `;
+            }
+        } else {
+            resultBox.classList.add("error");
+            resultBox.innerHTML = `❌ Data NISN <strong>${input}</strong> tidak ditemukan. Periksa kembali nomor yang Anda masukkan.`;
+        }
+    }
+</script>
+
+</body>
+</html>
